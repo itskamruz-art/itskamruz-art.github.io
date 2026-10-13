@@ -2,29 +2,120 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kamruz Art - Professional Designer</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>সরকার ট্রেডার্স</title>
 <style>
-body{margin:0;font-family:sans-serif;background:#0f0f0f;color:white;text-align:center}
-header{padding:80px 20px;background:linear-gradient(135deg,#ff6a00,#ee0979)}
-h1{font-size:48px;margin:0}
-p{font-size:18px;color:#ddd}
-.btn{display:inline-block;margin-top:20px;padding:14px 32px;background:white;color:black;border-radius:30px;text-decoration:none;font-weight:bold}
-section{padding:50px 20px}
-.card{background:#1e1e1e;padding:20px;margin:15px;border-radius:15px}
+*{box-sizing:border-box}body{margin:0;font-family:sans-serif;background:#f2f2f2}
+header{background:#0d1137;color:#fff;padding:18px;text-align:center;font-size:22px;font-weight:bold}
+nav{display:flex;gap:8px;justify-content:center;padding:10px;background:#fff;position:sticky;top:0;z-index:10;overflow:auto}
+nav button{padding:10px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-weight:bold;white-space:nowrap}
+nav button.active{background:#111;color:#fff}
+.container{max-width:1100px;margin:auto;padding:12px}
+.card{background:#fff;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.product{border:1px solid #eee;border-radius:12px;padding:8px;text-align:center;background:#fff}
+.product img{width:100%;height:140px;object-fit:cover;border-radius:10px;background:#eee}
+.price{font-weight:bold;font-size:18px;margin:6px 0;color:#d00}
+.buyBtn{background:#ff3b30;color:#fff;border:none;padding:10px;border-radius:8px;width:100%;font-weight:bold;cursor:pointer}
+.share-row{display:flex;gap:4px;margin-top:7px}
+.share-row a{flex:1;padding:6px 0;border-radius:6px;text-align:center;font-size:11px;color:#fff;text-decoration:none;font-weight:bold}
+.fb{background:#1877F2}.wa{background:#25D366}.ms{background:#0084FF}.all{background:#111}
+input,select,textarea{width:100%;padding:11px;margin:6px 0;border-radius:8px;border:1px solid #ccc}
+.addBtn{background:#111;color:#fff;border:none;padding:12px;border-radius:8px;width:100%;font-weight:bold;cursor:pointer}
+#orderModal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:15px;z-index:99}
+#orderBox{background:#fff;width:100%;max-width:420px;border-radius:12px;padding:15px;max-height:92vh;overflow:auto}
+.payBox{background:#fff3cd;border:1px dashed #e6a800;padding:10px;border-radius:8px;margin:8px 0;display:none}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{border:1px solid #ddd;padding:6px;text-align:left}th{background:#111;color:#fff}
 </style>
 </head>
 <body>
-<header>
-<h1>itskamruz art</h1>
-<p>Creative Designer | Logo | Poster | Branding</p>
-<a class="btn" href="https://wa.me/8801XXXXXXXXX">WhatsApp এ যোগাযোগ করুন</a>
-</header>
-<section>
-<div class="card"><h3>🎨 Logo Design</h3><p>প্রফেশনাল এবং ইউনিক লোগো ডিজাইন</p></div>
-<div class="card"><h3>🖼️ Poster Design</h3><p>আকর্ষণীয় সোশ্যাল মিডিয়া পোস্টার</p></div>
-<div class="card"><h3>✨ Branding</h3><p>আপনার ব্র্যান্ডকে করুন আরও সুন্দর</p></div>
-</section>
-<footer style="padding:30px;background:#000;color:#888">© 2026 Kamruz Art - All Rights Reserved</footer>
+<header>🏪 সরকার ট্রেডার্স - SARKAR TRADERS</header>
+<nav>
+<button onclick="filterShop('all')" id="b-all" class="active">সব</button>
+<button onclick="filterShop('fashion')" id="b-fashion">ফ্যাশন</button>
+<button onclick="filterShop('cosmetic')" id="b-cosmetic">কসমেটিক</button>
+<button onclick="filterShop('electronic')" id="b-electronic">ইলেকট্রনিক্স</button>
+</nav>
+<div class="container">
+<div class="card">
+<h3>➕ প্রোডাক্ট অ্যাড (ছবি সহ)</h3>
+<select id="pCat"><option value="fashion">ফ্যাশন কর্নার</option><option value="cosmetic">কসমেটিক</option><option value="electronic">ইলেকট্রনিক্স</option></select>
+<input id="pName" placeholder="পণ্যের নাম">
+<input id="pPrice" type="number" placeholder="দাম">
+<input id="pImg" type="file" accept="image/*">
+<button class="addBtn" onclick="addProduct()">Add করুন</button>
+</div>
+<div id="shop" class="shop-grid"></div><div class="card">
+<h3>📊 Excel - সব অর্ডার</h3>
+<div style="overflow:auto"><table id="excelTable"><thead><tr><th>Time</th><th>Customer</th><th>Phone</th><th>Product</th><th>Price</th><th>Payment</th><th>TrxID</th></tr></thead><tbody></tbody></table></div>
+<button class="addBtn" style="margin-top:10px;background:#0a8" onclick="exportExcel()">Excel ডাউনলোড</button>
+</div>
+</div>
+
+<div id="orderModal"><div id="orderBox">
+<h3>🛒 অর্ডার ফর্ম</h3><p id="orderPName" style="font-weight:bold"></p>
+<input id="cName" placeholder="নাম"><input id="cPhone" placeholder="ফোন"><textarea id="cAddr" placeholder="ঠিকানা"></textarea>
+<select id="cMethod" onchange="checkPay()"><option value="COD">Cash On Delivery</option><option value="Payment">Payment - Send Money</option></select>
+<div id="payBox" class="payBox"><b>Bkash/Nagad Personal: 01731-557732</b><br>Send Money করে TrxID দিন<input id="trxId" placeholder="TrxID"></div>
+<button class="addBtn" onclick="confirmOrder()">অর্ডার কনফার্ম</button>
+<button onclick="closeModal()" style="background:#ddd;color:#111;margin-top:8px" class="addBtn">বাতিল</button>
+<p id="msg" style="color:green;font-weight:bold"></p>
+</div></div>
+
+<script>
+let products = JSON.parse(localStorage.getItem('sarkar_products')||'[]');
+let orders = JSON.parse(localStorage.getItem('sarkar_orders')||'[]');
+let currentCat='all'; let selectedProduct=null; let imgBase64='';
+const MY_WA="8801731557732";
+const SHEET_URL="";
+
+document.getElementById('pImg').addEventListener('change',e=>{
+ let r=new FileReader(); r.onload=()=>imgBase64=r.result; r.readAsDataURL(e.target.files[0]);
+});
+function addProduct(){
+ let cat=pCat.value,name=pName.value.trim(),price=parseFloat(pPrice.value);
+ if(!name||!price||!imgBase64){alert('নাম, দাম, ছবি দিন');return}
+ products.push({cat,name,price,img:imgBase64}); localStorage.setItem('sarkar_products',JSON.stringify(products));
+ pName.value='';pPrice.value='';pImg.value='';imgBase64=''; render();
+}
+function filterShop(c){currentCat=c;document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));document.getElementById('b-'+c).classList.add('active');render();}
+function render(){
+ let shop=document.getElementById('shop');shop.innerHTML='';
+ let siteUrl = window.location.href;
+ products.filter(p=>currentCat=='all'||p.cat==currentCat).forEach((p,i)=>{
+  let text = encodeURIComponent(`🔥 ${p.name} - ${p.price} টাকা\n🏪 সরকার ট্রেডার্স\n👉 ${siteUrl}`);
+  let url = encodeURIComponent(siteUrl);
+  shop.innerHTML+=`<div class="product"><img src="${p.img}"><b>${p.name}</b><div class="price">${p.price} টাকা</div><button class="buyBtn" onclick="buyNow(${i})">Buy Now</button>
+  <div class="share-row">
+    <a class="fb" href="https://www.facebook.com/sharer/sharer.php?u=${url}" target="_blank">FB</a>
+    <a class="wa" href="https://wa.me/?text=${text}" target="_blank">WA</a>
+    <a class="ms" href="https://www.facebook.com/dialog/send?link=${url}" target="_blank">MS</a>
+    <a class="all" href="#" onclick="if(navigator.share){navigator.share({title:'সরকার ট্রেডার্স',text:'${p.name}',url:'${siteUrl}'})}else{navigator.clipboard.writeText('${siteUrl}');alert('লিংক কপি হয়েছে');}return false;">Share</a>
+  </div></div>`;
+ });
+ let tbody=document.querySelector('#excelTable tbody');tbody.innerHTML='';
+ orders.forEach(o=>{tbody.innerHTML+=`<tr><td>${o.time}</td><td>${o.customer}</td><td>${o.phone}</td><td>${o.product}</td><td>${o.price}</td><td>${o.method}</td><td>${o.trx}</td></tr>`});
+}
+function buyNow(i){selectedProduct=products[i];document.getElementById('orderPName').innerText=selectedProduct.name+' - '+selectedProduct.price+' টাকা';document.getElementById('orderModal').style.display='flex';}
+function closeModal(){document.getElementById('orderModal').style.display='none';}
+function checkPay(){document.getElementById('payBox').style.display=document.getElementById('cMethod').value=='Payment'?'block':'none';}
+function confirmOrder(){
+ let cNameVal=cName.value.trim(),cPhoneVal=cPhone.value.trim(),cAddrVal=cAddr.value.trim(),method=cMethod.value,trx=document.getElementById('trxId').value;
+ if(!cNameVal||!cPhoneVal){alert('নাম ফোন দিন');return}
+ if(method=='Payment'&&!trx){alert('TrxID দিন');return}
+ let data={time:new Date().toLocaleString(),customer:cNameVal,phone:cPhoneVal,address:cAddrVal,product:selectedProduct.name,price:selectedProduct.price,method:method,trx:trx||'COD'};
+ orders.push(data); localStorage.setItem('sarkar_orders',JSON.stringify(orders)); render();
+ if(SHEET_URL){fetch(SHEET_URL,{method:'POST',mode:'no-cors',body:JSON.stringify(data)});}
+ let waMsg=`নতুন অর্ডার%0A🏪 সরকার ট্রেডার্স%0AProduct: ${data.product}%0APrice: ${data.price}%0ACustomer: ${cNameVal}%0APhone: ${cPhoneVal}%0AAddress: ${cAddrVal}%0APayment: ${method} ${trx}`;
+ window.open(`https://wa.me/${MY_WA}?text=${waMsg}`,'_blank');
+ document.getElementById('msg').innerText='✅ অর্ডার Excel ও WhatsApp এ গেছে'; setTimeout(closeModal,2000);
+}
+function exportExcel(){
+ let csv="Time,Customer,Phone,Address,Product,Price,Method,TrxID\n";
+ orders.forEach(o=>{csv+=`"${o.time}","${o.customer}","${o.phone}","${o.address}","${o.product}","${o.price}","${o.method}","${o.trx}"\n`});
+ let blob=new Blob([csv],{type:'text/csv'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='Sarkar_Traders_Orders.csv'; a.click();
+}
+render();
+</script>
 </body>
 </html>
